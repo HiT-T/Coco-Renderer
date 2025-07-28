@@ -40,7 +40,7 @@ class CheckerTexture : public Texture {
             auto z_int = int(std::floor(invScale * p.z()));
 
             bool isEven = (x_int + y_int + z_int) % 2 == 0;
-            
+
             return isEven ? even->get_texColor(u, v, p) : odd->get_texColor(u, v, p);
         }
 

@@ -447,7 +447,7 @@ void RTNW(int image_width, int spp) {
 }
 
 int main() {
-    int scene_index = 9;
+    int scene_index = 8;
     switch(scene_index) {
         case 0: bouncing_spheres();  break;
         case 1: checkered_spheres(); break;
