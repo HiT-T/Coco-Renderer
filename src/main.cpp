@@ -1,6 +1,5 @@
 #include "global.h"
 
-
 #include "Object.h"
 #include "Sphere.h"
 #include "Quad.h"

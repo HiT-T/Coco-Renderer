@@ -1,5 +1,5 @@
-#ifndef STB_IMAGE_H
-#define STB_IMAGE_H
+#ifndef IMAGE_H
+#define IMAGE_H
 
 // Disable strict warnings for this header from the Microsoft Visual C++ compiler.
 #ifdef _MSC_VER
