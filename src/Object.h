@@ -28,9 +28,11 @@ class Object {
         virtual ~Object() = default;
 
         // stores result both in return value (if intersect) & isect (intersect data).
-        virtual bool intersect(const Ray& ri, Interval t_interval, Intersection& isect) const = 0; 
-
+        virtual bool intersect(const Ray& ri, Interval t_interval, Intersection& isect) const = 0;
         virtual AABB get_AABB() const = 0;
+        virtual double get_area() const { return .0; };
+        virtual void sample(Intersection &pos) const { return; };
+        virtual bool has_emission() const { return false; }; 
 };
 
 class Translate : public Object {
@@ -52,7 +54,10 @@ class Translate : public Object {
             return true;
         }
 
-        AABB get_AABB() const override { return aabb; }
+        inline AABB get_AABB() const override { return aabb; }
+        inline double get_area() const override { return obj->get_area(); }
+        inline void sample(Intersection &pos) const override { obj->sample(pos); }
+        inline bool has_emission() const override { return obj->has_emission(); }
 
     private:
         shared_ptr<Object> obj;
@@ -131,7 +136,10 @@ class RotateY : public Object {
             return true;
         }
 
-        AABB get_AABB() const override { return aabb; }
+        inline AABB get_AABB() const override { return aabb; }
+        inline double get_area() const override { return obj->get_area(); }
+        inline void sample(Intersection &pos) const override { obj->sample(pos); }
+        inline bool has_emission() const override { return obj->has_emission(); }
 
     private:
         shared_ptr<Object> obj;

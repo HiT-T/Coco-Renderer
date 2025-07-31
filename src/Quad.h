@@ -48,7 +48,20 @@ class Quad : public Object {
             aabb = AABB(aabb_diagonal1, aabb_diagonal2);
         }
 
-        AABB get_AABB() const override { return aabb; }
+        inline AABB get_AABB() const override { return aabb; }
+
+        inline double get_area() const override { 
+            return crossProduct(u, v).norm();
+        }
+
+        inline void sample(Intersection &pos) const override {
+            pos.p = Q + sample_double() * u + sample_double() * v;
+            pos.normal = normal;
+        }
+        
+        inline bool has_emission() const override {
+            return m->has_emission();
+        }
     
     private:
         Point3d Q; // quad's left-bottom vertice.

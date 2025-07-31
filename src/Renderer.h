@@ -44,32 +44,39 @@ class Renderer {
         private:
             double RussianRoulette = 0.8;
 
-            Color get_color(const Ray &ri, const Scene &scene) const {
+            Vector3d get_color(const Ray &ri, const Scene &scene) const {
 
                 auto isect = Intersection();
 
-                // if doesn't intersect or (t < .001), return background color.
+                // if doesn't intersect or (t < .001) at all, return background color.
                 // note: (t_min == 1e-3 (> 0)) avoids self-intersection caused by floating point rounding errors.
                 if (!scene.intersect(ri, Interval(1e-3, infinity), isect)) {
                     return scene.bgColor;
                 }
 
-                // test RR to decide if continues bouncing.
-                if (sample_double() > RussianRoulette) { return Color(); }
-
-                // if RR passes, compute emitted & scattered radiance respectively.
-                Color attenuation; Ray ro;
-                Color Le = isect.m->emit(isect.tex_u, isect.tex_v, isect.p);
-
-                // if doesn't scatter (light source), just return object's emission.
-                if (!isect.m->scatter(ri, isect, attenuation, ro)) {
-                    return Le;
+                // if hits a light source, just return object's emission.
+                if (isect.m->has_emission()) {
+                    return isect.m->emit(isect.tex_u, isect.tex_v, isect.p);
                 }
 
-                // compute scattered radiance by recursively self-calling, which contains direct & indirect illumination.
-                Color Ls = attenuation * get_color(ro, scene) / RussianRoulette;
+                Vector3d Lo_dir;
+                {
+                    Intersection hit_light; double pdf_light;
+                    scene.sample_light(hit_light, pdf_light);
+                }
 
-                return Le + Ls;
+                Vector3d Lo_indir;
+                {
+                    // test RR to decide if continues bouncing.
+                    if (sample_double() > RussianRoulette) { return Color(); }
+
+                    Color Ls, attenuation; Ray ro;
+                    if (isect.m->scatter(ri, isect, attenuation, ro)) {
+                        Lo_indir = attenuation * get_color(ro, scene) / RussianRoulette;
+                    }
+                }
+
+                return Lo_dir + Lo_indir;
             }
 };
 

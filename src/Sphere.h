@@ -55,7 +55,21 @@ class Sphere : public Object {
             return true;
         }
 
-        AABB get_AABB() const override { return aabb; }
+        inline AABB get_AABB() const override { return aabb; }
+
+        inline double get_area() const override { 
+            return 4 * pi * radius * radius;
+        }
+
+        inline void sample(Intersection &pos) const override {
+            Point3d current_center = center.at(sample_double());
+            pos.p = current_center + radius * sample_dir();
+            pos.normal = (pos.p - current_center) / radius;
+        }
+        
+        inline bool has_emission() const override {
+            return m->has_emission();
+        }
     
     private:
         Ray center; // allows center to move from start (t = 0) to end (t = 1).

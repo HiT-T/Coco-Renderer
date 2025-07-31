@@ -8,7 +8,8 @@ class Material {
     public:
         virtual ~Material() = default;
 
-        virtual Color emit(double u, double v, const Vector3d &p) const { return Color(); }
+        virtual bool has_emission() const { return false; }
+        virtual Color emit(double u, double v, const Vector3d &p) const = 0;
 
         virtual bool scatter(const Ray &ri, const Intersection &isect, Color &attenuation, Ray &ro)
         const { return false; }
@@ -112,6 +113,8 @@ class DiffuseLight : public Material {
     public:
         DiffuseLight(const Color &emit) : tex(make_shared<SolidColorTexture>(emit)) {}
         DiffuseLight(shared_ptr<Texture> tex) : tex(tex) {}
+
+        inline bool has_emission() const override { return true; }
 
         Color emit(double u, double v, const Vector3d &p) const override {
             return tex->get_texColor(u, v, p);

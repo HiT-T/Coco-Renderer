@@ -46,7 +46,7 @@ class BVHNode : public Object {
             return hit_left || hit_right;
         }
 
-        AABB get_AABB() const override { return aabb; }
+        inline AABB get_AABB() const override { return aabb; }
 
     private:
         shared_ptr<Object> left;

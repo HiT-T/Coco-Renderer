@@ -83,11 +83,14 @@ class Scene : public Object {
 
         void clear() { objects.clear(); }
 
-        AABB get_AABB() const override { return aabb; }
+        inline AABB get_AABB() const override { return aabb; }
 
         void add(shared_ptr<Object> object) { 
             objects.push_back(object); 
             aabb = AABB(aabb, object->get_AABB());
+            if (object->has_emission()) {
+                emit_area_sum += object->get_area();
+            }
         }
 
         void buildBVH() {
@@ -97,9 +100,25 @@ class Scene : public Object {
         bool intersect(const Ray &ri, Interval t_interval, Intersection& isect) const override {
             return this->bvh->intersect(ri, t_interval, isect);
         }
+
+        void sample_light(Intersection &pos, double &pdf_light) const {
+            double p = sample_double() * emit_area_sum;
+            double temp_area_sum = 0;
+            for (int i = 0; i < objects.size(); i++) {
+                if (objects[i]->has_emission()) {
+                    temp_area_sum += objects[i]->get_area();
+                    if (temp_area_sum > p) {
+                        objects[i]->sample(pos);
+                        pdf_light = emit_area_sum / 1;
+                        break;
+                    }
+                }
+            }
+        }
     
     private:
         AABB aabb;
+        double emit_area_sum;
 
         Vector3d   pixel_delta_u;   // offset to pixel to the right
         Vector3d   pixel_delta_v;   // offset to pixel below
