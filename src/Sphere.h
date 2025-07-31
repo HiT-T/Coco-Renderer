@@ -2,6 +2,7 @@
 #define SPHERE_H
 
 #include "Object.h"
+#include "Material.h"
 
 class Sphere : public Object {
     public:
@@ -51,6 +52,9 @@ class Sphere : public Object {
             isect.set_normal(ri, outward_normal);
             get_tex_uv(outward_normal, isect.tex_u, isect.tex_v);
             isect.m = m;
+            if (m->has_emission()) {
+                isect.emission = m->emit(isect.tex_u, isect.tex_v, isect.p);
+            }
 
             return true;
         }

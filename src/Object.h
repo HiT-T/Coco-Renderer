@@ -14,6 +14,7 @@ class Intersection {
         double tex_u, tex_v; // texture (u,v) coordinate of hitted object at p.
         double distance; // which is t (t>=0).
         bool happend_outside; // if ray-object intersection happens at object's outer surface.
+        Color emission; // if hits light source, stores its emission.
 
         // this guarantees normal always points agianst the ray.
         void set_normal(const Ray &ri, const Vector3d &outward_normal) {

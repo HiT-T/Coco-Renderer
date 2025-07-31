@@ -2,6 +2,7 @@
 #define QUAD_H
 
 #include "Object.h"
+#include "Material.h"
 #include "Scene.h"
 
 class Quad : public Object {
@@ -37,6 +38,9 @@ class Quad : public Object {
             isect.tex_u = alpha;
             isect.tex_v = beta;
             isect.m = m;
+            if (m->has_emission()) {
+                isect.emission = m->emit(isect.tex_u, isect.tex_v, isect.p);
+            }
 
             return true;
         }

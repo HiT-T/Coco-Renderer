@@ -4,6 +4,7 @@
 #include "AABB.h"
 #include "BVH.h"
 #include "Object.h"
+#include "Material.h"
 
 #include <vector>
 

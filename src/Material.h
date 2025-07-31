@@ -9,7 +9,7 @@ class Material {
         virtual ~Material() = default;
 
         virtual bool has_emission() const { return false; }
-        virtual Color emit(double u, double v, const Vector3d &p) const = 0;
+        virtual Color emit(double u, double v, const Vector3d &p) const { return Color(); };
 
         virtual bool scatter(const Ray &ri, const Intersection &isect, Color &attenuation, Ray &ro)
         const { return false; }
