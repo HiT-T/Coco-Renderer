@@ -14,7 +14,14 @@ Toy path tracer made for self-learning and in memory of our family dog, [Coco](C
 
 ## Blogs
 
+- to be written
+
 ## Gallery
 
+Cornell box
+
+![Example Image](sth.png)
+
 ## License
-This project is licensed under the MIT License. See the [LICENSE.txt](LICENSE.txt).
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
