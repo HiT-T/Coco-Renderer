@@ -1,2 +1,3 @@
-# Coco-Renderer
-a ray tracer (not complete yet).
+## Features
+
+- [v] Volumetric path tracing with next event estimation
