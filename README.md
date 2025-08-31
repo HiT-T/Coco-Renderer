@@ -13,6 +13,7 @@ Toy path tracer made for self-learning and in memory of our family dog, [Coco](C
 - [ ] Low-discrepancy sequences
 - [ ] Pixel reconstruction filter
 - [ ] Disney BRDF
+
 ...
 
 ## Blogs
