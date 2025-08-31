@@ -1,6 +1,6 @@
 # Coco Renderer
 
-Toy path tracer made for self-learning and in memory of our family dog, [Coco](Coco.gif).
+Toy path tracer made for self-learning and in memory of our family dog, [Coco](images/Coco.gif).
 
 ## Features
 
