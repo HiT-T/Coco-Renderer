@@ -10,7 +10,10 @@ Toy path tracer made for self-learning and in memory of our family dog, [Coco](C
 - [x] Depth of field
 - [x] Motion blur
 - [ ] Mesh loading & triangle mesh primitives
-- [ ] 
+- [ ] Low-discrepancy sequences
+- [ ] Pixel reconstruction filter
+- [ ] Disney BRDF
+...
 
 ## Blogs
 
