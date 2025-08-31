@@ -110,7 +110,7 @@ class Scene : public Object {
                     temp_area_sum += objects[i]->get_area();
                     if (temp_area_sum > p) {
                         objects[i]->sample(pos);
-                        pdf_light = emit_area_sum / 1;
+                        pdf_light = 1 / emit_area_sum;
                         break;
                     }
                 }

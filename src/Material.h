@@ -13,6 +13,14 @@ class Material {
 
         virtual bool scatter(const Ray &ri, const Intersection &isect, Color &attenuation, Ray &ro)
         const { return false; }
+
+        virtual double pdf(Vector3d wi, Vector3d wo, Vector3d N) const {
+            if (dotProduct(wi, N) > 0.0) {
+                return dotProduct(wi, N) / pi;
+            } else {
+                return 0.0;
+            }
+        }
 };
 
 class Diffuse : public Material {
@@ -57,7 +65,13 @@ class Metal : public Material {
         const override {
             // fuzzy dir = specular reflection dir + random vector in fuzz unit sphere .
             Vector3d wo = reflect(ri.direction(), isect.normal) + fuzz * sample_dir();
-            ro = Ray(isect.p, normalize(wo), ri.time());
+            if (wo.near_zero())
+            {
+                wo = reflect(ri.direction(), isect.normal);
+            } else {
+                wo = normalize(wo);
+            }
+            ro = Ray(isect.p, wo, ri.time());
             attenuation = albedo;
 
             // if fuzzing produces inward ray, treat it as absorbed by returning false.

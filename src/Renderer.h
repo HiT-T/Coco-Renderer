@@ -45,59 +45,97 @@ class Renderer {
             double RussianRoulette = 0.8;
 
             Color get_color(const Ray &ri, const Scene &scene) const {
-                
-                double epsilon = 5e-4;
+
                 auto isect = Intersection();
 
-                // if doesn't intersect or (t < .001) at all, return background color.
-                // note: (t_min == epsilon (> 0)) avoids self-intersection caused by floating point rounding errors.
-                if (!scene.intersect(ri, Interval(epsilon, infinity), isect)) {
+                // if doesn't intersect or (t < .001), return background color.
+                // note: (t_min == 1e-3 (> 0)) avoids self-intersection caused by floating point rounding errors.
+                if (!scene.intersect(ri, Interval(1e-3, infinity), isect)) {
                     return scene.bgColor;
                 }
 
-                // if hits a light source, just return object's emission.
-                if (isect.m->has_emission()) {
-                    return isect.m->emit(isect.tex_u, isect.tex_v, isect.p);
-                }
+                // test RR to decide if continues bouncing.
+                if (sample_double() > RussianRoulette) { return Color(); }
 
+                // if RR passes, compute emitted & scattered radiance respectively.
                 Color attenuation; Ray ro;
+                Color Le = isect.m->emit(isect.tex_u, isect.tex_v, isect.p);
+
+                // if doesn't scatter (light source), just return object's emission.
                 if (!isect.m->scatter(ri, isect, attenuation, ro)) {
-                    return Color();
+                    return Le;
                 }
 
-                Color Lo_dir;
-                {
-                    Intersection hit_light; double pdf_light;
-                    scene.sample_light(hit_light, pdf_light);
+                // compute scattered radiance by recursively self-calling, which contains direct & indirect illumination.
+                Color Ls = attenuation * get_color(ro, scene) / RussianRoulette;
 
-                    Vector3d obj2light = hit_light.p - isect.p;
-                    Ray shadow_ray(isect.p, normalize(obj2light));
-                    hit_light.set_normal(shadow_ray, hit_light.normal);
-
-                    Intersection isect_obj2light;
-                    scene.intersect(shadow_ray, Interval(epsilon, infinity), isect_obj2light);
-
-                    if (isect_obj2light.distance - obj2light.norm() > -epsilon) {
-                        double cosine = dotProduct(hit_light.normal, -shadow_ray.direction());
-
-                        Lo_dir = hit_light.emission
-                               * attenuation 
-                               * cosine
-                               / (hit_light.p - isect.p).norm_squared() 
-                               / pdf_light;
-                    }
-                }
-
-                Color Lo_indir;
-                {
-                    // test RR to decide if continues bouncing.
-                    if (sample_double() > RussianRoulette) { return Color(); }
-
-                    Lo_indir = attenuation * get_color(ro, scene) / RussianRoulette;
-                }
-
-                return Lo_dir + Lo_indir;
+                return Le + Ls;
             }
+
+
+            // Color get_color(const Ray &ri, const Scene &scene) const {
+                
+            //     double epsilon = 5e-4;
+            //     auto isect = Intersection();
+
+            //     // if doesn't intersect or (t < .001) at all, return background color.
+            //     // note: (t_min == epsilon (> 0)) avoids self-intersection caused by floating point rounding errors.
+            //     if (!scene.intersect(ri, Interval(epsilon, infinity), isect)) {
+            //         return scene.bgColor;
+            //     }
+
+            //     // if hits a light source, just return object's emission.
+            //     if (isect.m->has_emission()) {
+            //         return isect.m->emit(isect.tex_u, isect.tex_v, isect.p);
+            //     }
+
+            //     Color attenuation; Ray ro;
+            //     if (!isect.m->scatter(ri, isect, attenuation, ro)) {
+            //         return Color();
+            //     }
+
+            //     Color Lo_dir;
+            //     {
+            //         Vector3d wi = ri.direction();
+
+            //         Intersection hit_light; double pdf_light;
+            //         scene.sample_light(hit_light, pdf_light);
+
+            //         Vector3d obj2light = hit_light.p - isect.p, wl = normalize(obj2light);
+            //         Ray shadow_ray(isect.p, wl);
+            //         hit_light.set_normal(shadow_ray, hit_light.normal);
+
+            //         Intersection isect_obj2light;
+            //         scene.intersect(shadow_ray, Interval(epsilon, infinity), isect_obj2light);
+
+            //         if (isect_obj2light.distance - obj2light.norm() > -epsilon) {
+                        
+            //             double cosA = dotProduct(isect.normal, wl);
+            //             double cosB = dotProduct(hit_light.normal, -wl);
+            //             double r2 = (hit_light.p - isect.p).norm_squared();
+
+            //             // pdf under MIS.
+            //             double mixed_pdf = (pdf_light + isect.m->pdf(wi, wl, isect.normal)) / 2;
+
+            //             Lo_dir = hit_light.emission
+            //                    * (attenuation / pi)
+            //                    * cosA
+            //                    * cosB
+            //                    / r2
+            //                    / mixed_pdf;
+            //         }
+            //     }
+
+            //     Color Lo_indir;
+            //     {
+            //         // test RR to decide if continues bouncing.
+            //         if (sample_double() > RussianRoulette) { return Color(); }
+
+            //         Lo_indir = attenuation * get_color(ro, scene) / RussianRoulette;
+            //     }
+
+            //     return Lo_dir + Lo_indir;
+            // }
 };
 
 #endif
