@@ -20,7 +20,7 @@ Toy path tracer made for self-learning and in memory of our family dog, [Coco](C
 
 ## Gallery
 
-Cornell box
+Cornell Box
 
 ![Example Image](sth.png)
 
