@@ -14,8 +14,6 @@ Toy path tracer made for self-learning and in memory of our family dog, [Coco](C
 - [ ] Pixel reconstruction filter
 - [ ] Disney BRDF
 
-...
-
 ## Blogs
 
 - to be written
